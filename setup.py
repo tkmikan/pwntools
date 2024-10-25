@@ -31,6 +31,27 @@ if flag in sys.argv:
 else:
     flag = False
 
+DEPRECATED_SCRIPTS= [
+    'asm',
+    # 'checksec',
+    # 'constgrep',
+    'cyclic',
+    'debug',
+    'disablenx',
+    'disasm',
+    'elfdiff',
+    'elfpatch',
+    'errno',
+    'hex',
+    # 'libcdb',
+    # 'phd',
+    # 'pwnstrip',
+    'scramble',
+    # 'shellcraft',
+    'template',
+    'unhex',
+]
+
 for filename in glob.glob('pwnlib/commandline/*'):
     filename = os.path.basename(filename)
     filename, ext = os.path.splitext(filename)
@@ -38,7 +59,10 @@ for filename in glob.glob('pwnlib/commandline/*'):
     if ext != '.py' or filename in ('__init__', 'common', 'main', 'update', 'version'):
         continue
 
-    script = '%s=pwnlib.commandline.common:deprecated_main' % filename
+    if filename in DEPRECATED_SCRIPTS:
+        script = '%s=pwnlib.commandline.common:deprecated_main' % filename
+    else:
+        script = '%s=pwnlib.commandline.common:main' % filename
     if not flag:
         console_scripts.append(script)
 
