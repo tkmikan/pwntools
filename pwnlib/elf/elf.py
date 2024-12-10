@@ -52,6 +52,7 @@ from collections import namedtuple, defaultdict
 from elftools.elf.constants import P_FLAGS
 from elftools.elf.constants import SHN_INDICES
 from elftools.elf.descriptions import describe_e_type
+from elftools.elf.dynamic import DynamicSection
 from elftools.elf.elffile import ELFFile
 from elftools.elf.enums import ENUM_GNU_PROPERTY_X86_FEATURE_1_FLAGS
 from elftools.elf.gnuversions import GNUVerDefSection
@@ -1607,7 +1608,7 @@ class ELF(ELFFile):
         dt      = None
         dynamic = self.get_section_by_name('.dynamic')
 
-        if not dynamic:
+        if not dynamic or not isinstance(dynamic, DynamicSection):
             return None
 
         try:
@@ -2350,7 +2351,7 @@ class ELF(ELFFile):
     
     @staticmethod
     def set_runpath(exepath, runpath):
-        r"""set_runpath(str, str) -> ELF
+        r"""set_runpath(exepath, runpath) -> ELF
 
         Patches the RUNPATH of the ELF to the given path using the `patchelf utility <https://github.com/NixOS/patchelf>`_.
 
@@ -2385,7 +2386,7 @@ class ELF(ELFFile):
 
     @staticmethod
     def set_interpreter(exepath, interpreter_path):
-        r"""set_interpreter(str, str) -> ELF
+        r"""set_interpreter(exepath, interpreter_path) -> ELF
 
         Patches the interpreter of the ELF to the given binary using the `patchelf utility <https://github.com/NixOS/patchelf>`_.
 
@@ -2419,7 +2420,7 @@ class ELF(ELFFile):
 
     @staticmethod
     def patch_custom_libraries(exe_path, custom_library_path, create_copy=True, suffix='_remotelibc'):
-        r"""patch_custom_libraries(str, str, bool, str) -> ELF
+        r"""patch_custom_libraries(exe_path, custom_library_path, create_copy=True, suffix='_remotelibc') -> ELF
 
         Looks for the interpreter binary in the given path and patches the binary to use
         it if available. Also patches the RUNPATH to the given path using the `patchelf utility <https://github.com/NixOS/patchelf>`_.
